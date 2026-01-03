@@ -1,0 +1,273 @@
+{
+  "name": "00ZaloBot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "75e99638-4736-48b2-a248-46b4ceb0e5c8m123",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        336
+      ],
+      "id": "08dd86c9-8986-4842-b3c5-af79b91810d0",
+      "name": "Webhook",
+      "webhookId": "75e99638-4736-48b2-a248-46b4ceb0e5c8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://bot-api.zaloplatforms.com/bot{{$json.access_token}}/setWebhook ",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.Webhook_URL }}"
+            },
+            {
+              "name": "secret_token",
+              "value": "aa1233456"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "15f67821-ab75-4179-9f31-4a22c0aacf76",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.message.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh trả lời các câu hỏi người sử dụng"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        448,
+        336
+      ],
+      "id": "95d3b988-8e62-4e19-a4c1-afc5bb6224ec",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        560
+      ],
+      "id": "0d70c631-e05b-4983-aaf6-6155ebe89df4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "aPynMBMRDStqq6BB",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://bot-api.zaloplatforms.com/bot{{$('Input').item.json.access_token }}/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $('Webhook').item.json.body.message.from.id }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        800,
+        336
+      ],
+      "id": "066b3473-6341-400d-abf2-8a81ead5da9e",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "801137d3-13bc-4dae-a74d-bfb1c4454f77",
+              "name": "access_token",
+              "value": "2205133194648414848:YGYjPWSDupGRAYlkBEPctPizuMBsLGYRwlbRImXsWGPwSeMQVEJoPDMqFyBZeAzJ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        336
+      ],
+      "id": "dcae69ae-aab4-4824-8257-32d7e24c6cf9",
+      "name": "Input"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "308bb4e7-51f4-4971-8436-87a70e25fe8b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "801137d3-13bc-4dae-a74d-bfb1c4454f77",
+              "name": "access_token",
+              "value": "2205133194648414848:YGYjPWSDupGRAYlkBEPctPizuMBsLGYRwlbRImXsWGPwSeMQVEJoPDMqFyBZeAzJ",
+              "type": "string"
+            },
+            {
+              "id": "851b57e5-fbbc-4793-9fe1-8b70c2dea794",
+              "name": "Webhook_URL",
+              "value": "https://anhlaptrinhpyan.app.n8n.cloud/webhook/75e99638-4736-48b2-a248-46b4ceb0e5c8m123",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f9768af4-4dbc-4f9e-8c50-7e19cfb8db5c",
+      "name": "Input1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        []
+      ]
+    },
+    "Input": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "4c826999-8b8a-4de8-be31-b3f732ebf159",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9afe67c5c4700f465bf756215b5e5e959b7e37136df48464de5e08eb43e7b2cb"
+  },
+  "id": "ZSHYXmZjVzezj0d7",
+  "tags": []
+}
